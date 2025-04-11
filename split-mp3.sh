@@ -1,10 +1,37 @@
 #!/bin/sh
 
-input="output.mp3"
-dir_output="./chapters"
-metadata=$(ffprobe -i "$input" -print_format json -show_chapters -loglevel error)
+usage() {
+    scriptName=$(basename "$0")
+    echo "Usage:"
+    echo "    ${scriptName} <file.mp3>"
+}
 
-mkdir -p -v $dir_output
+if [ $# -lt 1 ]; then
+    echo "error: missing parameter"
+    usage
+    exit 1
+fi
+
+if [ "$1" = "-h" ] || [ "$1" = "-help" ]; then
+    usage
+    exit 0
+fi
+
+input="$1"
+input_extension=$(basename "${input}" | cut -d '.' -f2)
+
+if [ "${input_extension}" != "mp3" ]; then
+    echo "error: invalid input"
+    usage
+    exit 1
+fi
+
+inputDir=$(dirname "$input")
+inputName=$(basename "${input}" | tr -d ".mp3")
+dir_output="${inputDir}/${inputName}_chapters"
+
+metadata=$(ffprobe -i "$input" -print_format json -show_chapters -loglevel error)
+mkdir -p -v "${dir_output}"
 
 # Extract chapter details using jq
 echo "$metadata" | jq -c '.chapters[]' | while read -r chapter; do

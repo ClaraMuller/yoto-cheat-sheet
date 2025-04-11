@@ -45,3 +45,9 @@ ffmpeg -activation_bytes <ACTIVATION_BYTES> -i 'file.aax' -c:a libmp3lame -b:a 1
 ## 5 - Split by chapter [ optionnal ]
 
 See script `split-mp3.sh`
+
+```
+$ ./split-mp3.sh -h
+Usage:
+    split-mp3.sh <file.mp3>
+```
